@@ -4,20 +4,25 @@ import discord.ext.commands
 import asyncio
 
 data = {
-    "token": "",
-    "prefix": "!",
-    "blacklisted_roles": ["Server Booster", "@everyone", "everyone"]
+    "token": "",  # The discord bot token
+    "prefix": "!",  # The bot prefix
+    # A list of forbidden role names
+    "blacklisted_roles": ["Server Booster", "@everyone", "everyone"],
+    "insert_role_position": 0  # The index of which you should insert new roles at
 }
 
 color_converter = discord.ext.commands.ColourConverter()
 
 try:
     with open("config.json") as file:
-        data = json.load(file)
-except FileNotFoundError:
+        new_data = json.load(file)
+        data.update(new_data)
+        assert len(data) <= len(new_data)
+
+except (FileNotFoundError, AssertionError):
     with open("config.json", "w") as file:
         json.dump(data, file, indent=4)
-        print("Created default config file. Modify it and run the program again")
+        print("Created/updated config file. Modify it and run the program again")
         quit()
 
 bot = discord.ext.commands.Bot(command_prefix=data["prefix"])
@@ -39,7 +44,8 @@ async def role(ctx: discord.ext.commands.Context, name: str = None, color: disco
         if role:
             color = role.color
         else:
-            color = ctx.author.top_role.color  # gets @everyone and the default color (#000000)
+            # gets @everyone and the default color (#000000)
+            color = ctx.author.top_role.color
     async with ctx.typing():
         # if this is not here it continues "typing" after done
         await asyncio.sleep(0.1)
@@ -50,7 +56,10 @@ async def role(ctx: discord.ext.commands.Context, name: str = None, color: disco
             if role:
                 await role.edit(color=color, name=name, hoist=True)
             else:
-                await ctx.author.add_roles(await ctx.guild.create_role(color=color, name=name, hoist=True))
+                tmp_role: discord.Role = await ctx.guild.create_role(color=color, name=name, hoist=True)
+                await tmp_role.edit(position=data["insert_role_position"])
+                await ctx.author.add_roles(tmp_role)
+
             embed = discord.Embed(
                 title=f"Set {ctx.author.display_name}'s role to \"{name}\" with the color `{color}`")
             embed.color = color
