@@ -46,6 +46,7 @@ async def role(ctx: discord.ext.commands.Context, name: str = None, color: disco
         if name:
             if name in data["blacklisted_roles"]:
                 await ctx.send("That name is not allowed! Please choose another one instead.")
+                return
             if role:
                 await role.edit(color=color, name=name, hoist=True)
             else:
