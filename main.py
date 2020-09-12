@@ -6,7 +6,7 @@ import asyncio
 data = {
     "token": "",
     "prefix": "!",
-    "blacklisted_roles": ["Server Booster", "@everyone"]
+    "blacklisted_roles": ["Server Booster", "@everyone", "everyone"]
 }
 
 color_converter = discord.ext.commands.ColourConverter()
@@ -44,6 +44,8 @@ async def role(ctx: discord.ext.commands.Context, name: str = None, color: disco
         # if this is not here it continues "typing" after done
         await asyncio.sleep(0.1)
         if name:
+            if name in data["blacklisted_roles"]:
+                await ctx.send("That name is not allowed! Please choose another one instead.")
             if role:
                 await role.edit(color=color, name=name, hoist=True)
             else:
