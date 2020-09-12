@@ -49,7 +49,7 @@ async def role(ctx: discord.ext.commands.Context, name: str = None, color: disco
             else:
                 await ctx.author.add_roles(await ctx.guild.create_role(color=color, name=name, hoist=True))
             embed = discord.Embed(
-                title=f"Set {ctx.author.name}'s role to \"{name}\" with the color `{color}`")
+                title=f"Set {ctx.author.display_name}'s role to \"{name}\" with the color `{color}`")
             embed.color = color
             await ctx.send(embed=embed)
         else:
