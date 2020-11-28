@@ -60,8 +60,8 @@ async def role(ctx: discord.ext.commands.Context, name: str = None, color: disco
                 tmp_role: discord.Role = await ctx.guild.create_role(color=color, name=name, hoist=True)
                 await tmp_role.edit(position=data["insert_role_position"])
                 await ctx.author.add_roles(tmp_role)
-            if data["auto_role"]:
-                await ctx.author.add_roles(ctx.guild.get_role(data["auto_role"]))
+                if data["auto_role"]:
+                    await ctx.author.add_roles(ctx.guild.get_role(data["auto_role"]))
 
             embed = discord.Embed(
                 title=f"Set {ctx.author.display_name}'s role to \"{name}\" with the color `{color}`")
