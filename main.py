@@ -8,6 +8,7 @@ data = {
     "prefix": "!",  # The bot prefix
     # A list of forbidden role names
     "blacklisted_roles": ["Server Booster", "@everyone", "everyone"],
+    "blacklisted_snowflakes": [],
     "insert_role_position": 0,  # The index of which you should insert new roles at,
     "auto_role": None  # The role id of a role to add to everyone that requested a role
 }
@@ -53,6 +54,9 @@ async def role(ctx: discord.ext.commands.Context, name: str = None, color: disco
         if name:
             if name in data["blacklisted_roles"]:
                 await ctx.send("That name is not allowed! Please choose another one instead.")
+                return
+            if ctx.author.id in data["blacklisted_snowflakes"]:
+                await ctx.send("This user has been suspended from using this bot, try again later.")  
                 return
             if role:
                 await role.edit(color=color, name=name, hoist=True)
